@@ -1,49 +1,77 @@
 # Convolutional Neural Networks
+:label:`chap_cnn`
 
-In this chapter we introduce convolutional neural networks. They are
-the first nontrivial *architecture* beyond the humble multilayer
-perceptron. In their design scientists used inspiration from biology,
-group theory, and lots of experimentation to achieve stunning results
-in object reognition, segmentation, image synthesis and related
-computer vision tasks. 'Convnets', as they are often called, have
-become a cornerstone for deep learning research. Their applications
-reach beyond images to audio, text, video, time series analysis,
-graphs and recommender systems.
+In earlier chapters, we came up against image data,
+for which each example consists of a 2D grid of pixels.
+Depending on whether we're handling black-and-white or color images,
+each pixel location might be associated with either
+*one* or *multiple* numerical values, respectively.
+Until now, our way of dealing with this rich structure
+was deeply unsatisfying.
+We simply discarded each image's spatial structure
+by flattening them into 1D vectors, feeding them 
+through a (fully connected) MLP.
+Because these networks invariant to the order
+of the features we could get similar results
+regardless of whether we preserve an order 
+corresponding to the spatial structure of the pixels
+or if we permute the columns of our design matrix
+before fitting the MLP's parameters.
+Preferably, we would leverage our prior knowledge
+that nearby pixels are typically related to each other,
+to build efficient models for learning from image data. 
 
-We will first describe the operating principles of the convolutional
-layer and pooling layer in a convolutional neural network, and then
-explain padding, stride, input channels, and output channels. Next we
-will explore the design concepts of several representative deep
-convolutional neural networks. These models include the AlexNet, the
-first such network proposed, and later networks that use repeating
-elements (VGG), network in network (NiN), networks with parallel
-concatenations (GoogLeNet), residual networks (ResNet), and densely
-connected networks (DenseNet).  Many of these networks have led to
-significant progress in the ImageNet competition (a famous computer
-vision contest) within the past few years.
+This chapter introduces convolutional neural networks (CNNs),
+a powerful family of neural networks
+that were designed for precisely this purpose.
+CNN-based architectures are now ubiquitous
+in the field of computer vision, 
+and have become so dominant
+that hardly anyone today would develop
+a commercial application or enter a competition
+related to image recognition, object detection,
+or semantic segmentation,
+without building off of this approach.
 
-Over time the networks have increased in depth significantly,
-exceeding hundreds of layers. To train on them efficiently tools for
-capacity control, reparametrization and training acceleration are
-needed. Batch normalization and residual networks are both used to
-address these probems. We will describe them in this chapter.
+Modern *ConvNets*, as they are called colloquially
+owe their design to inspirations from biology, group theory,
+and a healthy dose of experimental tinkering.
+In addition to their sample efficiency in achieving accurate models,
+convolutional neural networks tend to be computationally efficient,
+both because they require fewer parameters than dense architectures
+and because convolutions are easy to parallelize across GPU cores.
+Consequently, practitioners often apply CNNs whenever possible,
+and increasingly they have emerged as credible competitors
+even on tasks with 1D sequence structure,
+such as audio, text, and time series analysis,
+where recurrent neural networks are conventionally used.
+Some clever adaptations of CNNs have also brought them to bear
+on graph-structured data and in recommender systems.
 
-```eval_rst
+First, we will walk through the basic operations
+that comprise the backbone of all convolutional networks.
+These include the convolutional layers themselves,
+nitty-gritty details including padding and stride,
+the pooling layers used to aggregate information
+across adjacent spatial regions,
+the use of multiple *channels* (also called *filters*) at each layer,
+and a careful discussion of the structure of modern architectures.
+We will conclude the chapter with a full working example of LeNet,
+the first convolutional network successfully deployed,
+long before the rise of modern deep learning.
+In the next chapter, we will dive into full implementations
+of some popular and comparatively recent CNN architectures
+whose designs represent most of the techniques
+commonly used by modern practitioners.
 
-.. toctree::
-   :maxdepth: 2
+```toc
+:maxdepth: 2
 
-   why-conv
-   conv-layer
-   padding-and-strides
-   channels
-   pooling
-   lenet
-   alexnet
-   vgg
-   nin
-   googlenet
-   batch-norm
-   resnet
-   densenet
+why-conv
+conv-layer
+padding-and-strides
+channels
+pooling
+lenet
 ```
+
